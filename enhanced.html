@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>EduFlow - Automated Attendance System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 1200px;
+            min-height: 600px;
+        }
+
+        .login-container {
+            padding: 60px;
+            text-align: center;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .dashboard-container {
+            display: none;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h2 {
+            font-size: 24px;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+            display: block;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin: 20px 0;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .attendance-table {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .table-header {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .status-present {
+            background: #d4edda;
+            color: #155724;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-absent {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin: 20px 0;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 0;
+        }
+
+        .filter-group select, .filter-group input {
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 40px 20px;
+            }
+            
+            .dashboard-container {
+                padding: 10px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Login Section -->
+        <div id="loginSection" class="login-container">
+            <div class="logo">
+                <img src="logo.svg" alt="EduFlow Logo">
+            </div>
+            <h1>EduFlow</h1>
+            <p class="subtitle">Automated Attendance System for Educational Institutions</p>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="role">Select Role</label>
+                    <select id="role" required>
+                        <option value="">Choose your role...</option>
+                        <option value="government">Government Official</option>
+                        <option value="teacher">Teacher</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required placeholder="gov_admin (government) or teacher1 (teacher)">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required placeholder="gov123 (government) or teacher123 (teacher)">
+                </div>
+                
+                <div class="form-group" id="classGroup" style="display: none;">
+                    <label for="teacherClass">Select Your Class</label>
+                    <select id="teacherClass">
+                        <option value="">Choose your class...</option>
+                        <option value="CSE-IOT">CSE-IOT</option>
+                        <option value="CSE-AIML">CSE-AIML</option>
+                        <option value="CSE-CORE">CSE-CORE</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="login-btn">Login</button>
+            </form>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboardSection" class="dashboard-container">
+            <div class="header">
+                <div class="header-left">
+                    <img src="logo.svg" alt="EduFlow" class="header-logo">
+                    <div>
+                        <h2 id="dashboardTitle">Dashboard</h2>
+                        <span id="userInfo"></span>
+                    </div>
+                </div>
+                <div>
+                    <button class="refresh-btn" onclick="manualRefresh()" title="Refresh data now">
+                        🔄 Refresh
+                    </button>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Time Period</label>
+                    <select id="timePeriod" onchange="updateAnalytics()">
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                        <option value="year">This Year</option>
+                    </select>
+                </div>
+                <div class="filter-group" id="classFilter" style="display: none;">
+                    <label>Class Filter</label>
+                    <select id="classSelect" onchange="updateAnalytics()">
+                        <option value="all">All Classes</option>
+                        <option value="CSE-IOT">CSE-IOT</option>
+                        <option value="CSE-AIML">CSE-AIML</option>
+                        <option value="CSE-CORE">CSE-CORE</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Date Range</label>
+                    <input type="date" id="startDate" onchange="updateAnalytics()">
+                </div>
+                <div class="filter-group">
+                    <label>&nbsp;</label>
+                    <input type="date" id="endDate" onchange="updateAnalytics()">
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number" id="totalStudents">0</span>
+                    <span class="stat-label">Total Students</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="presentToday">0</span>
+                    <span class="stat-label">Present Today</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="absentToday">0</span>
+                    <span class="stat-label">Absent Today</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="attendanceRate">0%</span>
+                    <span class="stat-label">Attendance Rate</span>
+                </div>
+            </div>
+
+            <!-- Simple Statistics Display (No Charts) -->
+            <div class="chart-grid">
+                <div class="chart-container">
+                    <h3>Today's Attendance</h3>
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="font-size: 48px; color: #28a745; font-weight: bold;" id="todayPresent">0</div>
+                        <div style="font-size: 24px; color: #666; margin: 10px 0;">Students Present</div>
+                        <div style="font-size: 18px; color: #999;" id="todayStats">Out of 100 total students</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3>This Week's Average</h3>
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="font-size: 48px; color: #17a2b8; font-weight: bold;" id="weeklyPresent">0</div>
+                        <div style="font-size: 24px; color: #666; margin: 10px 0;">Average Present</div>
+                        <div style="font-size: 18px; color: #999;" id="weeklyStats">Daily average this week</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3>This Month's Average</h3>
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="font-size: 48px; color: #6f42c1; font-weight: bold;" id="monthlyPresent">0</div>
+                        <div style="font-size: 24px; color: #666; margin: 10px 0;">Average Present</div>
+                        <div style="font-size: 18px; color: #999;" id="monthlyStats">Daily average this month</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3>Overall Statistics</h3>
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="font-size: 48px; color: #20c997; font-weight: bold;" id="overallPresent">0</div>
+                        <div style="font-size: 24px; color: #666; margin: 10px 0;">Overall Average</div>
+                        <div style="font-size: 18px; color: #999;" id="overallStats">All time attendance rate</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attendance Table -->
+            <div class="attendance-table">
+                <div class="table-header">
+                    <h3>Recent Attendance Records</h3>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table id="attendanceTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Class</th>
+                                <th>Roll No</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceTableBody">
+                            <tr>
+                                <td colspan="6" class="loading">Loading attendance data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let allData = [];
+        let filteredData = [];        // API Base URL - works for both local and production
+        const API_BASE = window.location.hostname === 'localhost' 
+            ? 'http://localhost:3001/api' 
+            : '/api';
+
+        // NO FAKE DATA - ONLY REAL GOOGLE SHEETS DATA
+        let attendanceData = [];        // Initialize
+        let currentUser = null;
+        let currentUserClass = null;
+        
+        // Auto-refresh variables
+        let refreshInterval = null;
+        let isRefreshing = false;
+        const REFRESH_INTERVAL_MS = 30000; // 30 seconds
+        let lastRefreshTime = 0;
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            setDefaultDates();
+
+            // Dev mode: skip login and go straight to dashboard
+            currentUser = { username: 'dev_admin', role: 'government', token: null };
+            const loginSection = document.getElementById('loginSection');
+            if (loginSection) loginSection.style.display = 'none';
+            showDashboard();
+        });
+
+        function setupEventListeners() {
+            // Role selection handler
+            document.getElementById('role').addEventListener('change', function() {
+                const classGroup = document.getElementById('classGroup');
+                if (this.value === 'teacher') {
+                    classGroup.style.display = 'block';
+                    document.getElementById('teacherClass').required = true;
+                } else {
+                    classGroup.style.display = 'none';
+                    document.getElementById('teacherClass').required = false;
+                }
+            });
+
+            // Login form handler
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+        }
+
+        function setDefaultDates() {
+            const today = new Date();
+            const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+            
+            document.getElementById('startDate').value = weekAgo.toISOString().split('T')[0];
+            document.getElementById('endDate').value = today.toISOString().split('T')[0];
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const role = document.getElementById('role').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const teacherClass = document.getElementById('teacherClass').value;
+
+            // Validate teacher class selection
+            if (role === 'teacher' && !teacherClass) {
+                alert('Please select your class');
+                return;
+            }
+
+            try {
+                console.log('🔐 Attempting login with:', { username, password: '***', role });
+                console.log('🌐 API endpoint:', `${API_BASE}/auth/login`);
+                
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password, role })
+                });
+
+                console.log('📡 Response status:', response.status, response.statusText);
+
+                const data = await response.json();
+                console.log('📊 Response data:', data);
+
+                if (response.ok && data.token) {
+                    currentUser = {
+                        username: data.user.username,
+                        role: data.user.role,
+                        token: data.token
+                    };
+                    // Persist session
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify({
+                        username: data.user.username,
+                        role: data.user.role,
+                        classes: data.user.classes || []
+                    }));
+                    
+                    if (role === 'teacher') {
+                        currentUserClass = teacherClass;
+                        localStorage.setItem('teacherClass', teacherClass);
+                    }
+
+                    showDashboard();
+                } else {
+                    const errorMessage = data.message || data.error || 'Login failed';
+                    if (errorMessage.includes('Invalid credentials')) {
+                        alert(`❌ LOGIN FAILED: Invalid credentials!\n\nCorrect credentials:\n• Government: gov_admin / gov123\n• Teacher: teacher1 / teacher123\n\nPlease try again with the correct username and password.`);
+                    } else {
+                        alert(`❌ LOGIN FAILED: ${errorMessage}`);
+                    }
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Login failed. Please check your connection and try again.');
+            }
+        }
+
+        function showDashboard() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('dashboardSection').style.display = 'block';
+
+            // Update dashboard title and user info
+            const title = currentUser.role === 'government' ? 'EduFlow - Government Dashboard' : 'EduFlow - Teacher Dashboard';
+            document.getElementById('dashboardTitle').textContent = title;
+            
+            let userInfo = `Welcome, ${currentUser.username} (${currentUser.role})`;
+            if (currentUserClass) {
+                userInfo += ` - ${currentUserClass}`;
+            }
+            document.getElementById('userInfo').textContent = userInfo;
+
+            // Show/hide class filter based on role
+            if (currentUser.role === 'government') {
+                document.getElementById('classFilter').style.display = 'block';
+            }
+
+            // Load dashboard data
+            loadDashboardData();
+        }
+
+        async function loadDashboardData() {
+            console.log('Loading dashboard data...');
+            try {
+                await Promise.all([
+                    loadAttendanceRecords(),
+                    updateStatistics(),
+                    updateAnalytics()
+                ]);
+                
+                console.log('Dashboard data loaded successfully');
+                
+                // Start auto-refresh after initial load
+                startAutoRefresh();
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                showMessage('Failed to load dashboard data. Please check your connection and login credentials.', 'error');
+            }
+        }
+
+        // Auto-refresh functionality
+        function startAutoRefresh() {
+            // Clear any existing interval
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+            
+            console.log(`🔄 Starting auto-refresh every ${REFRESH_INTERVAL_MS / 1000} seconds`);
+            refreshInterval = setInterval(async () => {
+                await refreshDataSilently();
+            }, REFRESH_INTERVAL_MS);
+            
+            // Update last refresh time
+            lastRefreshTime = Date.now();
+            updateRefreshIndicator();
+            
+            // Start countdown timer (updates every second)
+            startRefreshCountdown();
+        }
+
+        function startRefreshCountdown() {
+            // Clear any existing countdown
+            if (window.countdownInterval) {
+                clearInterval(window.countdownInterval);
+            }
+            
+            window.countdownInterval = setInterval(() => {
+                updateRefreshIndicator();
+            }, 1000);
+        }
+
+        function stopAutoRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+                refreshInterval = null;
+                console.log('🛑 Auto-refresh stopped');
+            }
+            
+            if (window.countdownInterval) {
+                clearInterval(window.countdownInterval);
+                window.countdownInterval = null;
+            }
+        }
+
+        async function refreshDataSilently() {
+            if (isRefreshing) {
+                console.log('⏳ Refresh already in progress, skipping...');
+                return;
+            }
+            
+            // Proceed even without token (dev mode auth disabled)
+            const token = localStorage.getItem('token');
+            
+            isRefreshing = true;
+            
+            try {
+                console.log('🔄 Auto-refreshing data silently...');
+                
+                // Show subtle refresh indicator
+                showRefreshIndicator();
+                
+                // Load fresh data
+                await loadAttendanceRecords();
+                await updateAnalytics();
+                
+                // Update last refresh time
+                lastRefreshTime = Date.now();
+                updateRefreshIndicator();
+                
+                console.log('✅ Auto-refresh completed successfully');
+                
+            } catch (error) {
+                console.error('❌ Auto-refresh failed:', error);
+                // Don't show error message for silent refresh to avoid interrupting user
+            } finally {
+                isRefreshing = false;
+                hideRefreshIndicator();
+            }
+        }
+
+        function showRefreshIndicator() {
+            // Create or update refresh indicator
+            let indicator = document.getElementById('refreshIndicator');
+            if (!indicator) {
+                indicator = document.createElement('div');
+                indicator.id = 'refreshIndicator';
+                indicator.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: rgba(76, 175, 80, 0.9);
+                    color: white;
+                    padding: 8px 12px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                    z-index: 1000;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                `;
+                document.body.appendChild(indicator);
+            }
+            indicator.innerHTML = '🔄 Refreshing data...';
+            indicator.style.display = 'block';
+        }
+
+        function hideRefreshIndicator() {
+            const indicator = document.getElementById('refreshIndicator');
+            if (indicator) {
+                indicator.style.display = 'none';
+            }
+        }
+
+        function updateRefreshIndicator() {
+            if (lastRefreshTime) {
+                const timeAgo = Math.round((Date.now() - lastRefreshTime) / 1000);
+                const nextRefresh = Math.max(0, REFRESH_INTERVAL_MS / 1000 - timeAgo);
+                
+                // Update user info to show refresh status
+                const userInfo = document.getElementById('userInfo');
+                if (userInfo && currentUser) {
+                    let baseText = `Welcome, ${currentUser.username} (${currentUser.role})`;
+                    if (currentUserClass) {
+                        baseText += ` - ${currentUserClass}`;
+                    }
+                    baseText += ` | Last refresh: ${timeAgo}s ago | Next: ${nextRefresh}s`;
+                    userInfo.textContent = baseText;
+                }
+            }
+        }
+
+        // Manual refresh function
+        async function manualRefresh() {
+            if (isRefreshing) {
+                showMessage('Refresh already in progress...', 'info');
+                return;
+            }
+            
+            showMessage('🔄 Refreshing data...', 'info');
+            await refreshDataSilently();
+            showMessage('✅ Data refreshed successfully!', 'success');
+        }
+
+        async function loadAttendanceRecords() {
+            console.log('🔄 Loading REAL attendance data from Google Sheets ONLY...');
+            
+            const token = localStorage.getItem('token');
+            
+            try {
+                if (token) {
+                    console.log('🔑 Using token:', token.substring(0, 50) + '...');
+                } else {
+                    console.log('ℹ️ No token present, attempting unauthenticated request (dev mode)');
+                }
+                const headers = { 'Content-Type': 'application/json' };
+                if (token) headers['Authorization'] = `Bearer ${token}`;
+                const response = await fetch(`${API_BASE}/attendance`, { method: 'GET', headers });
+
+                console.log('📡 API Response status:', response.status, response.statusText);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Raw Google Sheets data received:', data);
+                    
+                    if (data && data.length > 0) {
+                        attendanceData = data;
+                        console.log(`🎯 SUCCESS: Loaded ${attendanceData.length} REAL records from Google Sheets`);
+                        console.log('📊 Sample records:', attendanceData.slice(0, 3));
+                        showMessage(`✅ Successfully loaded ${attendanceData.length} real attendance records from Google Sheets!`, 'success');
+                    } else {
+                        console.log('📝 Google Sheets is empty - no data to display');
+                        attendanceData = [];
+                        showMessage('📋 Google Sheets is empty. Please add student attendance data to your spreadsheet first.', 'warning');
+                    }
+                } else if (response.status === 401 || response.status === 403) {
+                    console.error('🔒 Authentication failed - token expired or invalid');
+                    showMessage('🔒 Authentication required. Enable DISABLE_AUTH on the server to bypass login, or login with credentials.', 'error');
+                    localStorage.removeItem('token');
+                    attendanceData = [];
+                } else {
+                    console.error('❌ Failed to load from Google Sheets:', response.status, response.statusText);
+                    const errorText = await response.text();
+                    console.error('❌ Error details:', errorText);
+                    showMessage(`❌ Failed to load data from Google Sheets: ${response.statusText}. Please check server connection.`, 'error');
+                    attendanceData = [];
+                }
+            } catch (error) {
+                console.error('💥 Error connecting to backend:', error);
+                showMessage('💥 Cannot connect to backend server. Please ensure both servers are running on ports 3000 and 3001.', 'error');
+                attendanceData = [];
+            }
+            
+            updateAttendanceTable();
+        }
+
+        function showMessage(message, type = 'info') {
+            const container = document.getElementById('attendanceTableBody').parentElement;
+            const messageDiv = document.createElement('div');
+            const alertClass = type === 'error' ? 'danger' : type === 'warning' ? 'warning' : type === 'success' ? 'success' : 'info';
+            messageDiv.className = `alert alert-${alertClass}`;
+            messageDiv.style.margin = '20px 0';
+            messageDiv.innerHTML = `<strong>${type.toUpperCase()}:</strong> ${message}`;
+            
+            // Remove existing messages
+            const existingMessages = container.querySelectorAll('.alert');
+            existingMessages.forEach(msg => msg.remove());
+            
+            // Add new message
+            container.insertBefore(messageDiv, container.firstChild);
+            
+            // Auto-remove success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    if (messageDiv && messageDiv.parentElement) {
+                        messageDiv.remove();
+                    }
+                }, 5000);
+            }
+        }
+
+        function updateAttendanceTable() {
+            const tbody = document.getElementById('attendanceTableBody');
+            
+            let filteredData = attendanceData;
+            
+            // Filter by class for teachers
+            if (currentUser.role === 'teacher' && currentUserClass) {
+                filteredData = attendanceData.filter(record => record.CLASS === currentUserClass);
+            }
+
+            // Filter by selected class for government
+            const selectedClass = document.getElementById('classSelect').value;
+            if (currentUser.role === 'government' && selectedClass !== 'all') {
+                filteredData = filteredData.filter(record => record.CLASS === selectedClass);
+            }
+
+            // Filter by date range
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            if (startDate && endDate) {
+                filteredData = filteredData.filter(record => {
+                    const recordDate = new Date(record.DATE);
+                    return recordDate >= new Date(startDate) && recordDate <= new Date(endDate);
+                });
+            }
+
+            tbody.innerHTML = '';
+
+            if (filteredData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="loading">No attendance records found</td></tr>';
+                return;
+            }
+
+            // Sort by date and time (most recent first)
+            filteredData.sort((a, b) => {
+                const dateA = new Date(a.DATE + ' ' + a.TIME);
+                const dateB = new Date(b.DATE + ' ' + b.TIME);
+                return dateB - dateA;
+            });
+
+            // Show latest 50 records
+            filteredData.slice(0, 50).forEach(record => {
+                const row = document.createElement('tr');
+                const status = record.TIME ? 'present' : 'absent';
+                
+                row.innerHTML = `
+                    <td>${record.NAME}</td>
+                    <td>${record.CLASS}</td>
+                    <td>${record['ROLL NO']}</td>
+                    <td>${formatDate(record.DATE)}</td>
+                    <td>${record.TIME || '-'}</td>
+                    <td><span class="status-${status}">${status.toUpperCase()}</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        async function updateStatistics() {
+            let data = attendanceData || [];
+            
+            // Filter by class for teachers
+            if (currentUser.role === 'teacher' && currentUserClass) {
+                data = attendanceData.filter(record => record.CLASS === currentUserClass);
+            }
+
+            // Filter by selected class for government
+            const selectedClass = document.getElementById('classSelect')?.value;
+            if (currentUser.role === 'government' && selectedClass && selectedClass !== 'all') {
+                data = data.filter(record => record.CLASS === selectedClass);
+            }
+
+            // Filter by date range
+            const startDate = document.getElementById('startDate')?.value;
+            const endDate = document.getElementById('endDate')?.value;
+            
+            if (startDate && endDate) {
+                data = data.filter(record => {
+                    const recordDate = new Date(record.DATE);
+                    return recordDate >= new Date(startDate) && recordDate <= new Date(endDate);
+                });
+            }
+
+            // Filter by time period
+            const timePeriod = document.getElementById('timePeriod')?.value;
+            if (timePeriod && (!startDate || !endDate)) {
+                const now = new Date();
+                let filterStartDate;
+                
+                switch(timePeriod) {
+                    case 'today':
+                        filterStartDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                        break;
+                    case 'week':
+                        filterStartDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                        break;
+                    case 'month':
+                        filterStartDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                        break;
+                    case 'year':
+                        filterStartDate = new Date(now.getFullYear(), 0, 1);
+                        break;
+                }
+                
+                if (filterStartDate) {
+                    data = data.filter(record => {
+                        const recordDate = new Date(record.DATE);
+                        return recordDate >= filterStartDate && recordDate <= now;
+                    });
+                }
+            }
+
+            // Get today's date in YYYY-MM-DD format
+            const today = new Date().toISOString().split('T')[0];
+            console.log('Today\'s date for comparison:', today);
+            console.log('Filtered data for statistics:', data.length, 'records');
+            
+            // Calculate statistics from filtered data
+            const totalStudents = new Set(data.map(record => record['ROLL NO'])).size;
+            const todayRecords = data.filter(record => {
+                console.log('Comparing record date:', record.DATE, 'with today:', today);
+                return record.DATE === today;
+            });
+            console.log('Today\'s records found:', todayRecords.length);
+            
+            const uniquePresentToday = new Set(
+                todayRecords.filter(record => record.TIME && record.TIME.trim() !== '').map(record => record['ROLL NO'])
+            ).size;
+            const absentToday = Math.max(0, totalStudents - uniquePresentToday);
+            const attendanceRate = totalStudents > 0 ? Math.round((uniquePresentToday / totalStudents) * 100) : 0;
+
+            console.log('Statistics calculated:', {
+                totalStudents,
+                uniquePresentToday,
+                absentToday,
+                attendanceRate
+            });
+
+            // Update UI
+            const totalStudentsEl = document.getElementById('totalStudents');
+            const presentTodayEl = document.getElementById('presentToday');
+            const absentTodayEl = document.getElementById('absentToday');
+            const attendanceRateEl = document.getElementById('attendanceRate');
+            
+            if (totalStudentsEl) totalStudentsEl.textContent = totalStudents;
+            if (presentTodayEl) presentTodayEl.textContent = uniquePresentToday;
+            if (absentTodayEl) absentTodayEl.textContent = absentToday;
+            if (attendanceRateEl) attendanceRateEl.textContent = attendanceRate + '%';
+        }
+
+        async function updateAnalytics() {
+            console.log('Updating analytics with data length:', attendanceData.length);
+
+            let data = attendanceData || [];
+            
+            // Filter by class for teachers
+            if (currentUser.role === 'teacher' && currentUserClass) {
+                data = data.filter(record => record.CLASS === currentUserClass);
+            }
+
+            // Filter by selected class for government
+            const selectedClass = document.getElementById('classSelect')?.value;
+            if (currentUser.role === 'government' && selectedClass && selectedClass !== 'all') {
+                data = data.filter(record => record.CLASS === selectedClass);
+            }
+
+            // Filter by date range
+            const startDate = document.getElementById('startDate')?.value;
+            const endDate = document.getElementById('endDate')?.value;
+            
+            if (startDate && endDate) {
+                data = data.filter(record => {
+                    const recordDate = new Date(record.DATE);
+                    return recordDate >= new Date(startDate) && recordDate <= new Date(endDate);
+                });
+                console.log('Date range filter applied:', startDate, 'to', endDate);
+            }
+
+            // Filter by time period
+            const timePeriod = document.getElementById('timePeriod')?.value;
+            if (timePeriod) {
+                const now = new Date();
+                let filterStartDate;
+                
+                switch(timePeriod) {
+                    case 'today':
+                        filterStartDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                        break;
+                    case 'week':
+                        filterStartDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                        break;
+                    case 'month':
+                        filterStartDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                        break;
+                    case 'year':
+                        filterStartDate = new Date(now.getFullYear(), 0, 1);
+                        break;
+                }
+                
+                if (filterStartDate && (!startDate || !endDate)) {
+                    data = data.filter(record => {
+                        const recordDate = new Date(record.DATE);
+                        return recordDate >= filterStartDate && recordDate <= now;
+                    });
+                    console.log('Time period filter applied:', timePeriod);
+                }
+            }
+
+            console.log('Filtered data length:', data.length);
+
+            createDailyChart(data);
+            createWeeklyChart(data);
+            createMonthlyChart(data);
+            createClassChart(data);
+            
+            // Also update the main statistics and attendance table
+            updateStatistics();
+            updateAttendanceTable();
+        }
+
+        function createDailyChart(data) {
+            console.log('Updating daily statistics with filtered data length:', data.length);
+            
+            // Use the already filtered data
+            let filteredData = data;
+            
+            // Get today's data from the filtered dataset
+            const today = new Date().toISOString().split('T')[0];
+            const todayRecords = filteredData.filter(record => record.DATE === today);
+            const uniqueStudentsPresent = new Set(
+                todayRecords.filter(record => record.TIME).map(record => record['ROLL NO'])
+            ).size;
+            
+            // Calculate total students from the filtered dataset
+            const totalUniqueStudents = new Set(filteredData.map(record => record['ROLL NO'])).size;
+            const totalStudents = totalUniqueStudents > 0 ? totalUniqueStudents : 100;
+            const absent = Math.max(0, totalStudents - uniqueStudentsPresent);
+
+            // Update display elements
+            const todayPresentElement = document.getElementById('todayPresent');
+            const todayStatsElement = document.getElementById('todayStats');
+            
+            if (todayPresentElement) {
+                todayPresentElement.textContent = uniqueStudentsPresent;
+            }
+            if (todayStatsElement) {
+                todayStatsElement.textContent = `${absent} absent out of ${totalStudents} total students`;
+            }
+        }
+
+        function createWeeklyChart(data) {
+            console.log('Updating weekly statistics with filtered data length:', data.length);
+            
+            // Use the already filtered data
+            let filteredData = data;
+            
+            // Get this week's data (last 7 days) from filtered dataset
+            const totalUniqueStudents = new Set(filteredData.map(record => record['ROLL NO'])).size;
+            const totalStudents = totalUniqueStudents > 0 ? totalUniqueStudents : 100;
+            let totalPresent = 0;
+            let daysCount = 0;
+            
+            for (let i = 0; i < 7; i++) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                
+                const dayRecords = filteredData.filter(record => record.DATE === dateStr);
+                if (dayRecords.length > 0) {
+                    const presentCount = new Set(
+                        dayRecords.filter(record => record.TIME).map(record => record['ROLL NO'])
+                    ).size;
+                    totalPresent += presentCount;
+                    daysCount++;
+                }
+            }
+            
+            const avgPresent = daysCount > 0 ? Math.round(totalPresent / daysCount) : 0;
+
+            const weeklyPresentElement = document.getElementById('weeklyPresent');
+            const weeklyStatsElement = document.getElementById('weeklyStats');
+            
+            if (weeklyPresentElement) {
+                weeklyPresentElement.textContent = avgPresent;
+            }
+            if (weeklyStatsElement) {
+                weeklyStatsElement.textContent = `${Math.round((avgPresent/totalStudents)*100)}% attendance rate`;
+            }
+        }
+
+        function createMonthlyChart(data) {
+            console.log('Updating monthly statistics with filtered data length:', data.length);
+            
+            // Use the already filtered data
+            let filteredData = data;
+            
+            // Get this month's data (last 30 days) from filtered dataset
+            const totalUniqueStudents = new Set(filteredData.map(record => record['ROLL NO'])).size;
+            const totalStudents = totalUniqueStudents > 0 ? totalUniqueStudents : 100;
+            let totalPresent = 0;
+            let daysCount = 0;
+            
+            for (let i = 0; i < 30; i++) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                
+                const dayRecords = filteredData.filter(record => record.DATE === dateStr);
+                if (dayRecords.length > 0) {
+                    const presentCount = new Set(
+                        dayRecords.filter(record => record.TIME).map(record => record['ROLL NO'])
+                    ).size;
+                    totalPresent += presentCount;
+                    daysCount++;
+                }
+            }
+            
+            const avgPresent = daysCount > 0 ? Math.round(totalPresent / daysCount) : 0;
+
+            const monthlyPresentElement = document.getElementById('monthlyPresent');
+            const monthlyStatsElement = document.getElementById('monthlyStats');
+            
+            if (monthlyPresentElement) {
+                monthlyPresentElement.textContent = avgPresent;
+            }
+            if (monthlyStatsElement) {
+                monthlyStatsElement.textContent = `${Math.round((avgPresent/totalStudents)*100)}% attendance rate`;
+            }
+        }
+
+        function createClassChart(data) {
+            console.log('Updating overall statistics with filtered data length:', data.length);
+            
+            // Use the already filtered data
+            let filteredData = data;
+            
+            // Calculate overall attendance from filtered dataset
+            const totalUniqueStudents = new Set(filteredData.map(record => record['ROLL NO'])).size;
+            const totalStudents = totalUniqueStudents > 0 ? totalUniqueStudents : 100;
+            
+            // Calculate average attendance across all days in the filtered data
+            const uniqueDates = [...new Set(filteredData.map(record => record.DATE))];
+            let totalPresentAcrossDays = 0;
+            let validDaysCount = 0;
+            
+            uniqueDates.forEach(date => {
+                const dayRecords = filteredData.filter(record => record.DATE === date);
+                if (dayRecords.length > 0) {
+                    const presentCount = new Set(
+                        dayRecords.filter(record => record.TIME).map(record => record['ROLL NO'])
+                    ).size;
+                    totalPresentAcrossDays += presentCount;
+                    validDaysCount++;
+                }
+            });
+            
+            const avgPresent = validDaysCount > 0 ? Math.round(totalPresentAcrossDays / validDaysCount) : 0;
+
+            const overallPresentElement = document.getElementById('overallPresent');
+            const overallStatsElement = document.getElementById('overallStats');
+            
+            if (overallPresentElement) {
+                overallPresentElement.textContent = avgPresent;
+            }
+            if (overallStatsElement) {
+                overallStatsElement.textContent = `${Math.round((avgPresent/totalStudents)*100)}% average attendance`;
+            }
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            
+            const container = document.querySelector('.dashboard-container');
+            container.insertBefore(errorDiv, container.firstChild);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+
+        function logout() {
+            // Stop auto-refresh
+            stopAutoRefresh();
+            
+            // Clear authentication
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            localStorage.removeItem('teacherClass');
+            currentUser = null;
+            currentUserClass = null;
+            attendanceData = [];
+            
+            // Reset form
+            document.getElementById('loginForm').reset();
+            document.getElementById('classGroup').style.display = 'none';
+            
+            // Show login section
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.getElementById('loginSection').style.display = 'block';
+            
+            // Hide refresh indicator
+            hideRefreshIndicator();
+            
+            console.log('🚪 Logged out and auto-refresh stopped');
+        }
+    </script>
+</body>
+</html>
