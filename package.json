@@ -1,40 +1,26 @@
 {
-  "name": "rfid-attendance-system",
+  "name": "eduflow-frontend",
   "version": "1.0.0",
-  "description": "RFID Attendance System with Google Sheets Integration",
-  "main": "backend/server.js",
+  "description": "EduFlow Attendance System - Frontend Only",
+  "main": "index.html",
   "scripts": {
-    "start": "node backend/server.js",
-    "dev": "nodemon backend/server.js",
-    "frontend": "node serve-frontend.js",
-    "install-deps": "npm install",
-    "setup": "node initialize.js",
-    "init": "npm install && node initialize.js",
+    "start": "echo 'Open index.html in your browser or serve it with any static server'",
+    "serve": "python3 -m http.server 8000 || python -m http.server 8000 || npx serve .",
     "build": "echo 'No build step required for static frontend'",
-    "vercel": "vercel --prod"
+    "deploy": "echo 'Deploy to any static hosting service (Netlify, Vercel, GitHub Pages, etc.)'"
   },
   "keywords": [
-    "rfid",
     "attendance",
-    "google-sheets",
-    "nodejs",
-    "web-app"
+    "frontend",
+    "javascript",
+    "html",
+    "css",
+    "demo"
   ],
   "author": "",
   "license": "MIT",
-  "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "google-spreadsheet": "^4.1.2",
-    "google-auth-library": "^9.4.1",
-    "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2",
-    "serialport": "^12.0.0",
-    "body-parser": "^1.20.2",
-    "helmet": "^7.0.0"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "serve": "^14.2.1"
   }
 }
