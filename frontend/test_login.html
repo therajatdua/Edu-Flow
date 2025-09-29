@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Test</title>
+</head>
+<body>
+    <h1>EduFlow Login Test</h1>
+    <div>
+        <input type="text" id="username" placeholder="Username" value="gov_admin">
+        <input type="password" id="password" placeholder="Password" value="gov123">
+        <select id="role">
+            <option value="government">Government</option>
+            <option value="teacher">Teacher</option>
+        </select>
+        <button onclick="testLogin()">Test Login</button>
+    </div>
+    <div id="result"></div>
+
+    <script>
+        const API_BASE = 'http://localhost:5001/api';
+
+        async function testLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+            
+            const result = document.getElementById('result');
+            result.innerHTML = 'Testing login...';
+
+            try {
+                console.log('Attempting login with:', { username, password, role });
+                
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password, role })
+                });
+
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+
+                const data = await response.json();
+                console.log('Response data:', data);
+
+                if (response.ok && data.token) {
+                    result.innerHTML = `<div style="color: green;">✅ LOGIN SUCCESS!<br>Token: ${data.token.substring(0, 50)}...<br>User: ${data.user.username}<br>Role: ${data.user.role}</div>`;
+                } else {
+                    result.innerHTML = `<div style="color: red;">❌ LOGIN FAILED: ${data.message || data.error}</div>`;
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                result.innerHTML = `<div style="color: red;">❌ CONNECTION ERROR: ${error.message}<br>Check browser console for details.</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
